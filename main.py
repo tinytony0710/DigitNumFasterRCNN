@@ -545,6 +545,6 @@ if __name__ == '__main__':
 
     print(f"\n生成 Task 2 文件: {output_csv}...")
     sorted_image_ids = sorted(task2_results.keys())
-    task2_list_result = [[k, task2_results[k].item()] for k in sorted_image_ids]
+    task2_list_result = [[k, task2_results[k]] for k in sorted_image_ids]
     save_csv(output_csv, task2_list_result, ['image_id', 'pred_label'])
     print(f"  成功生成 {output_csv} ({len(sorted_image_ids)} images)")
