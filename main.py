@@ -251,6 +251,7 @@ if __name__ == '__main__':
         help='The directory where you save all the data. '
         + 'Should include train, val, test.'
     )
+    parser.add_argument('--epoch', type=int, default=5)
     args = parser.parse_args()
 
     data_root = args.directory
@@ -261,7 +262,7 @@ if __name__ == '__main__':
     test_data_dir = path.join(data_root, 'test')
 
     class_num = 10 + 1 # 10 數字 + 1 背景
-    epoch_num = 1
+    epoch_num = args.epoch
     batch_size = 16
     lr = 0.1
     scheduler_step = 1
