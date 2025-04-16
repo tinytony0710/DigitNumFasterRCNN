@@ -28,6 +28,7 @@ import torch.nn as nn
 
 from datasets import DigitDataset, TestDigitDataset
 from utils.data_io import load_image, save_csv, save_json
+from argparse import ArgumentParser
 
 class ToTensor:
     def __call__(self, image, target=None):
@@ -243,7 +244,16 @@ def evaluate(model, data_loader, device, score_threshold=0.5):
 
 # --- 7. 主要執行流程 ---
 if __name__ == '__main__':
-    data_root = './teehee/data'
+    
+    parser = ArgumentParser()
+    parser.add_argument(
+        'directory',
+        help='The directory where you save all the data. '
+        + 'Should include train, val, test.'
+    )
+    args = parser.parse_args()
+
+    data_root = args.directory
     train_json_file = path.join(data_root, 'train.json')
     valid_json_file = path.join(data_root, 'valid.json')
     train_data_dir = path.join(data_root, 'train')
