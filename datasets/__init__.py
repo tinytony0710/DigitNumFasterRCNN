@@ -78,8 +78,8 @@ class DigitDataset(Dataset):
         image = load_image(image_path)
 
         # choose 1 out of 3
-        # if random.random() < 0.33:
-        #     image = reinforce_image(image, scale=3.0)
+        if random.random() < 0.33:
+            image = reinforce_image(image, scale=1.0)
 
 
         annotations = self.image_id_to_annotations.get(image_id, [])
@@ -176,7 +176,7 @@ class TestDigitDataset(Dataset):
             image_id = idx
 
         image = load_image(image_path)
-        # image = reinforce_image(image, scale=3.0)
+        image = reinforce_image(image, scale=1.0)
 
         if self.transforms:
             image = self.transforms(image, target=None) # 測試時 target 為 None
