@@ -38,11 +38,13 @@ class DigitDataset(Dataset):
                 self.image_id_to_annotations[image_id] = []
             # 檢查 bbox 格式和有效性
             if not isinstance(ann.get('bbox'), list) or len(ann['bbox']) != 4:
-                print(f"警告: 圖像 {image_id}, 標註 {ann.get('id', 'N/A')} bbox 格式錯誤: {ann.get('bbox')}. 跳過.")
+                print(f'警告: 圖像 {image_id}, 標註 {ann.get('id', 'N/A')} '\
+                      f'bbox 格式錯誤: {ann.get('bbox')}. 跳過.')
                 continue
             xmin, ymin, w, h = ann['bbox']
             if w <= 0 or h <= 0:
-                print(f"警告: 圖像 {image_id}, 標註 {ann.get('id', 'N/A')} bbox 尺寸無效 (w={w}, h={h}). 跳過.")
+                print(f'警告: 圖像 {image_id}, 標註 {ann.get('id', 'N/A')} '\
+                      f'bbox 尺寸無效 (w={w}, h={h}). 跳過.')
                 continue
             self.image_id_to_annotations[image_id].append(ann)
 
@@ -54,15 +56,17 @@ class DigitDataset(Dataset):
         for idx, image in enumerate(self.images):
             image_id = image['id']
             # 確保圖像有標註且標註列表不為空
-            if image_id in self.image_id_to_annotations and self.image_id_to_annotations[image_id]:
-                 self.valid_image_indices.append(idx)
-                 valid_image_ids.add(image_id)
+            if image_id in self.image_id_to_annotations
+                            and self.image_id_to_annotations[image_id]:
+                self.valid_image_indices.append(idx)
+                valid_image_ids.add(image_id)
 
         original_image_count = len(self.images)
         loaded_image_count = len(self.valid_image_indices)
         print(f"載入了 {loaded_image_count} 張圖像 ({json_path}).")
         if original_image_count > loaded_image_count:
-             print(f"注意: {original_image_count - loaded_image_count} 張圖像因無標註或標註無效而被過濾。")
+             print(f'注意: {original_image_count - loaded_image_count} '\
+                   f'張圖像因無標註或標註無效而被過濾。')
 
 
     def __len__(self):
@@ -104,10 +108,14 @@ class DigitDataset(Dataset):
             iscrowd.append(ann.get('iscrowd', 0))
 
         # 轉換為 Tensors
-        boxes = torch.as_tensor(boxes, dtype=torch.float32) if boxes else torch.empty((0, 4), dtype=torch.float32)
-        labels = torch.as_tensor(labels, dtype=torch.int64) if labels else torch.empty((0,), dtype=torch.int64)
-        areas = torch.as_tensor(areas, dtype=torch.float32) if areas else torch.empty((0,), dtype=torch.float32)
-        iscrowd = torch.as_tensor(iscrowd, dtype=torch.int64) if iscrowd else torch.empty((0,), dtype=torch.int64)
+        boxes = torch.as_tensor(boxes, dtype=torch.float32) if boxes\
+                    else torch.empty((0, 4), dtype=torch.float32)
+        labels = torch.as_tensor(labels, dtype=torch.int64) if labels\
+                    else torch.empty((0,), dtype=torch.int64)
+        areas = torch.as_tensor(areas, dtype=torch.float32) if areas\
+                    else torch.empty((0,), dtype=torch.float32)
+        iscrowd = torch.as_tensor(iscrowd, dtype=torch.int64) if iscrowd\
+                    else torch.empty((0,), dtype=torch.int64)
 
         # 再次檢查邊界框在 Tensor 層面是否有效
         if boxes.shape[0] > 0:
@@ -163,8 +171,9 @@ class TestDigitDataset(Dataset):
 
     def __getitem__(self, idx):
         if idx >= len(self.image_files):
-             # Handle potential index out of bounds, though DataLoader shouldn't cause this normally
-             return None, None
+            # Handle potential index out of bounds, though DataLoader
+            # shouldn't cause this normally
+            return None, None
 
         file_name = self.image_files[idx]
         image_path = path.join(self.image_dir, file_name)
@@ -172,7 +181,8 @@ class TestDigitDataset(Dataset):
         try:
             image_id = int(path.splitext(file_name)[0])
         except ValueError:
-            print(f"警告: 無法從測試文件名 '{file_name}' 提取數字 ID。將使用索引 {idx} 作為 ID。")
+            print(f'警告: 無法從測試文件名 '{file_name}' 提取數字 ID。'\
+                  f'將使用索引 {idx} 作為 ID。')
             image_id = idx
 
         image = load_image(image_path)

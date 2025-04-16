@@ -45,19 +45,20 @@ class Compose:
         for t in self.transforms:
             # 假設轉換函數能處理 (image) 或 (image, target)
             if hasattr(t, '__call__'):
-                 try:
-                     if target is None:
-                         image = t(image)
-                     else:
-                         image, target = t(image, target)
-                 except TypeError: # 如果轉換函數只接受圖像
-                     if target is not None:
-                         image = t(image)
-                     else:
-                          image = t(image) # TestDataset
+                try:
+                    if target is None:
+                        image = t(image)
+                    else:
+                        image, target = t(image, target)
+                except TypeError: # 如果轉換函數只接受圖像
+                    if target is not None:
+                        image = t(image)
+                    else:
+                        image = t(image) # TestDataset
             else:
-                 # Handle cases if t is not callable, though unlikely for transform lists
-                 pass
+                # Handle cases if t is not callable,
+                #  though unlikely for transform lists
+                pass
         if target is None:
             return image
         else:
@@ -336,9 +337,9 @@ if __name__ == '__main__':
     # --- 訓練循環 ---
     print(f"使用設備: {device}")
     print(f"開始訓練 {epoch_num} 個 Epochs...")
-    best_val_metric = -float('inf') # 初始化為負無窮大，因為準確率/mAP越大越好
-    best_val_loss = float('inf')   # 初始化為正無窮大，損失越小越好
-    metric_to_monitor = 'task2_accuracy' # 或 'mAP' 或 'average_val_loss'
+    best_val_metric = -float('inf')
+    best_val_loss = float('inf')
+    metric_to_monitor = 'task2_accuracy'
     best_model_path = f'faster_rcnn_digits_best_{metric_to_monitor}.pth'
 
     start_train_time = time.time()
@@ -391,7 +392,9 @@ if __name__ == '__main__':
               f", 當前學習率: {optimizer.param_groups[0]['lr']:.6f}")
 
         # --- 執行驗證 ---
-        val_metrics = evaluate(model, data_loader_val, device=device, score_threshold=score_threshold)
+        val_metrics = evaluate(model, data_loader_val,
+                               device=device,
+                               score_threshold=score_threshold)
         print(f"--- Epoch [{epoch+1}/{epoch_num}] 驗證結果 ---")
         val_loss_str = "N/A"
         if 'average_val_loss' in val_metrics:
@@ -416,7 +419,8 @@ if __name__ == '__main__':
                 val_map = val_metrics['mAP']
                 val_map_str = f"{val_map:.4f}"
                 print(f"  COCO mAP @ IoU=0.50:0.95: {val_map_str}")
-                if 'mAP_50' in val_metrics: print(f"  COCO mAP @ IoU=0.50: {val_metrics['mAP_50']:.4f}")
+                if 'mAP_50' in val_metrics:
+                    print(f"  COCO mAP @ IoU=0.50: {val_metrics['mAP_50']:.4f}")
         else:
                 val_map = 0.0 # 或者設為 -1 表示未計算/失敗
 
