@@ -534,7 +534,10 @@ if __name__ == '__main__':
              for i in range(len(pred['labels']))]
         )
         pred_str = get_number_from_detections(pred, score_threshold)
-        task2_results[image_id] = pred_str
+        if pred_str.strip(' ') == ''
+            task2_results[image_id] = '-1'
+        else:
+            task2_results[image_id] = pred_str
 
     end_test_time = time.time()
     print(f"測試集推斷完成! 耗時: {(end_test_time - start_test_time):.2f} 秒")
